@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1015">
+  <meta name="description" content="Precious cargo. Questionable odds. Pilot your ship through a 90-second asteroid run in this free, offline-ready browser arcade game.">
+  <title>Orbital Courier — Special delivery. Deep space.</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="engine.js" defer></script>
+  <script src="game.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="masthead">
+      <a class="wordmark" href="./index.html" aria-label="Orbital Courier home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 20 12 30 16 20 20 16 30 12 20 2 16 12 12Z"/></svg><span>ORBITAL<span class="wordmark-light"> / ARCADE</span></span></a>
+      <div class="header-right"><span class="live-dot"></span><span>ALL SYSTEMS NOMINAL</span><span class="edition">VOL. 001</span></div>
+    </header>
+
+    <main>
+      <div class="mission-top"><p><span class="mini-cross">+</span> YOUR NEXT 90 SECONDS, ACCOUNTED FOR.</p><span class="mission-tag">SINGLE PLAYER <span>•</span> INFINITE RETRIES</span></div>
+      <section class="game-shell" aria-label="Orbital Courier arcade game">
+        <canvas id="game-canvas" width="1200" height="650" tabindex="0" aria-label="Game field. Use arrow keys or W A S D to move. Space to phase through asteroids. P or Escape to pause. Collect glowing diamond cargo and survive 90 seconds.">Your browser needs Canvas support to play Orbital Courier.</canvas>
+        <div class="field-edge edge-tl"></div><div class="field-edge edge-tr"></div><div class="field-edge edge-bl"></div><div class="field-edge edge-br"></div>
+
+        <div id="hud" class="hud" hidden>
+          <div class="hud-score"><span class="small-label">CARGO VALUE</span><strong id="score">00000</strong><span class="cargo-count"><span id="cargo">0</span> PARCELS</span></div>
+          <div class="hud-route"><span class="small-label" id="sector">SECTOR 01 / 06</span><div class="route-track"><span id="route-progress"></span></div><span class="time-remaining" id="time">01:30</span></div>
+          <div class="hud-actions"><div class="hull"><span class="small-label">HULL</span><div id="hull" aria-label="3 shields remaining"><i></i><i></i><i></i></div></div><button id="pause-button" class="icon-button" aria-label="Pause game" title="Pause (P)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg></button></div>
+        </div>
+
+        <div id="intro" class="screen intro-screen">
+          <div class="intro-copy"><div class="eyebrow"><span class="pill-dot"></span> INTERSTELLAR EXPRESS</div><h1>Special delivery.<br><span>Deep space.</span></h1><p class="intro-description">Precious cargo. Questionable odds.<br>One little ship with a very big deadline.</p><button id="start-button" class="primary-button"><span>LET’S FLY</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7"/></svg></button><p class="start-note">90-second run <span>·</span> No experience required</p></div>
+          <div class="ship-label"><span class="label-line"></span><div><span class="small-label">YOUR TRUSTY RIDE</span><strong>THE NIGHT SHIFT</strong><span class="ship-spec">CLASS C COURIER / PROBABLY INSURED</span></div></div>
+          <div class="intro-bottom"><span><span class="key tiny">↵</span> PRESS ENTER TO LAUNCH</span><span class="best-label">PERSONAL BEST <strong id="intro-best">00000</strong></span></div>
+        </div>
+
+        <div id="pause-screen" class="screen modal-screen" role="dialog" aria-modal="true" aria-labelledby="pause-title" hidden><div class="modal-card"><span class="eyebrow">A MOMENT OF QUIET</span><h2 id="pause-title">Holding orbit.</h2><p>Your cargo can wait a little longer.</p><button id="resume-button" class="primary-button">BACK TO FLIGHT <span>→</span></button><button id="restart-paused" class="text-button">Start a fresh run</button><span class="modal-hint">P / ESC TO RESUME</span></div></div>
+        <div id="end-screen" class="screen modal-screen" role="dialog" aria-modal="true" aria-labelledby="result-title" hidden><div class="modal-card"><span class="eyebrow" id="result-eyebrow">END OF THE LINE</span><h2 id="result-title">A rough landing.</h2><p id="result-description">The cargo was insured. Your pride? Less so.</p><div class="result-stats"><div><span class="small-label">FINAL SCORE</span><strong id="final-score">0</strong></div><div><span class="small-label">CARGO COLLECTED</span><strong id="final-cargo">0</strong></div></div><span id="new-record" class="record-badge" hidden>NEW PERSONAL BEST ↗</span><button id="retry-button" class="primary-button">ONE MORE RUN <span>→</span></button><button id="home-button" class="text-button">Back to the hangar</button></div></div>
+
+        <div id="game-bottom" class="game-bottom" hidden><span id="streak-label" class="streak-label">FIND THE GLOW. FOLLOW THE CARGO.</span><button id="phase-button" class="phase-button" aria-label="Activate phase, ready"><span class="phase-symbol">◇</span><span id="phase-text">PHASE READY</span><span class="key tiny">SPACE</span><i id="phase-fill"></i></button></div>
+        <div class="sound-control"><button id="sound-button" class="quiet-button" aria-label="Enable sound" aria-pressed="false"><svg id="sound-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m11 4-6 5H2v6h3l6 5V4ZM16 9l6 6M22 9l-6 6"/></svg><span id="sound-label">SOUND OFF</span></button></div>
+      </section>
+
+      <section class="flight-manual" aria-label="How to play">
+        <div class="manual-heading"><span class="small-label">THE FLIGHT MANUAL</span><span>READING OPTIONAL. DODGING ESSENTIAL.</span></div>
+        <div class="instruction-grid">
+          <article class="instruction-card"><span class="instruction-number">01</span><div><h3>Find your flow.</h3><p><span class="desktop-instructions">Move with <kbd>W A S D</kbd> or <kbd>↑ ← ↓ →</kbd>.</span><span class="touch-instructions">Drag anywhere in the field to steer.</span><br>Small ship. Surprisingly nimble.</p></div><svg viewBox="0 0 44 44" aria-hidden="true"><path d="M22 6v32M6 22h32M16 12l6-6 6 6M16 32l6 6 6-6M12 16l-6 6 6 6M32 16l6 6-6 6"/></svg></article>
+          <article class="instruction-card"><span class="instruction-number">02</span><div><h3>Make it a streak.</h3><p>Grab glowing cargo. Chain pickups<br>within 4 seconds for up to 4× points.</p></div><svg class="cargo-icon" viewBox="0 0 44 44" aria-hidden="true"><path d="m22 5 17 17-17 17L5 22Z"/><path d="m22 14 8 8-8 8-8-8Z"/></svg></article>
+          <article class="instruction-card"><span class="instruction-number">03</span><div><h3>Slip through trouble.</h3><p><span class="desktop-instructions">Hit <kbd>SPACE</kbd> to phase through rocks.</span><span class="touch-instructions">Tap PHASE to pass through rocks.</span><br>Recharges every 6 seconds.</p></div><svg viewBox="0 0 44 44" aria-hidden="true"><path d="m25 4-15 21h11l-2 15 15-22H23Z"/></svg></article>
+        </div>
+      </section>
+      <p id="announcer" class="sr-only" role="status" aria-live="polite"></p>
+      <noscript><p class="noscript">Please enable JavaScript to play. No downloads, accounts, or network connection are needed.</p></noscript>
+    </main>
+    <footer><span>BUILT FOR THE JOY OF THE DETOUR.</span><span>NO ADS. NO TRACKING. JUST ONE MORE RUN. <span class="footer-star">✦</span></span></footer>
+  </div>
+</body>
+</html>
